@@ -20,20 +20,22 @@ class Parser
 	}
 
     /**
-     * Removes lists that are created via Markdown * (star) syntax from a string
-     * of Markdown.
+     * Filters stars (*) from the given Markdown string by
+     * 1. converting double stars (**) used for emphasis to double 
+     *    underscores (__)
+     * 2. removing lists (single star). To keep your Markdown lists intact 
+     *    within the comments, you can use the - (minus) symbol instead of the 
+     *    star within your Markdown code.
      * 
-     * Useful because in PHP comments, each line of a multi-line
-     * comment begins with a star. To keep your Markdown lists intact within the
-     * comments, you can use the - (minus) symbol instead of the star within
-     * your Markdown code.
+     * Useful because in PHP comments, each line of a multi-line comment begins 
+     * with a star. 
      * 
      * @param string $string
      * @return string
      */
-	public function removeLists($string)
+	public function removeStars($string)
 	{
-		return preg_replace('/[\n]*\t*\*.*/', '', $string);
+		return preg_replace('/[\n]*\t*\*.*/', '', str_replace('**', '__', $string));
 	}
 
     /**
@@ -51,7 +53,7 @@ class Parser
 		foreach ($parts as $key => $part)
 		{
 			if ($key%2 === 0) {
-				$part = $this->removeLists($part);
+				$part = $this->removeStars($part);
 				$part = $this->parseComments($part);
 			} else {
 				$part = $this->parseCode($part);
